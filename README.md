@@ -1,1 +1,3 @@
-# K8s
+Setup Kubernetes Nodes on Ubuntu
+This repository provides lightweight Bash scripts to automate the setup of Kubernetes master and worker nodes on Ubuntu systems. It handles essential installation steps, system configurations, and networking prerequisites, enabling faster and consistent K8s cluster deployments.
+Ideal for DevOps engineers and developers who want a streamlined, repeatable Kubernetes setup without manual intervention.
