@@ -58,7 +58,7 @@ kubeadm version
 sudo swapoff -a
 sudo hostnamectl set-hostname master
 echo "On the master node, initialize the Kubernetes cluster ..."
-sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+sudo kubeadm init --pod-network-cidr=XX.XXX.X.X/XX
 echo "Configure kubectl on master..."
 
 sudo mkdir -p $HOME/.kube
