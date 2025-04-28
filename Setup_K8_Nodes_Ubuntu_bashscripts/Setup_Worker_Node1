@@ -1,0 +1,57 @@
+#!/bin/bash
+echo " Update Ubuntu VM..."
+sudo apt update
+echo " Upgrade Ubuntu VM..."
+sudo apt upgrade -y
+echo " Install apt-transport-https ca-certificates curl vim ..."
+sudo apt install -y apt-transport-https ca-certificates curl vim net-tools
+echo " Disable swap by editing the `/etc/fstab` file and commenting out the swap line, then turn off swap:..."
+sudo swapoff -a && sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+echo "Static IP address settings ..."
+
+FILE="/etc/netplan/00-installer-config.yaml"
+
+echo "Backing up original Netplan config..."
+sudo cp "$FILE" "$FILE.bak"
+
+echo " Writing static IP configuration to $FILE..."
+
+sudo tee "$FILE" > /dev/null <<EOF
+network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+    ens33:
+      dhcp4: no
+      addresses:
+        - XXX.XXX.XXX.XXX/XX
+      gateway4: XXX.XXX.XXX.X
+      nameservers:
+        addresses:
+          - 8.8.8.8
+          - 8.8.4.4
+EOF
+
+echo " Applying Netplan changes..."
+sudo netplan apply
+
+echo " Static IP configuration applied."
+
+echo " Install Docker..."
+sudo apt install -y docker.io
+echo " Enable Docker Service ...."
+sudo systemctl enable docker
+echo " Start Docker Service ..."
+sudo systemctl start docker
+echo " Check Docker Service Status...."
+sudo systemctl status docker
+echo "Add the Kubernetes apt repository and install 'kubeadm', 'kubelet', and 'kubectl' ..."
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+kubeadm version
+sudo swapoff -a
+sudo hostnamectl set-hostname Workernode1
