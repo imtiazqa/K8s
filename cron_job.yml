@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: imtiaz
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: imtiaz
+              image: ubuntu
+              command: ["/bin/bash", "-c", "echo Launch job after every 1 minute; sleep 20"]
+          restartPolicy: Never
+

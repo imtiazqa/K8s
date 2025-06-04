@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testpodp2
+spec:
+  containers:
+    - name: cont2
+      image: httpd
+      ports:
+        - containerPort: 80
